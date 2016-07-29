@@ -1,0 +1,59 @@
+<ion-content class="main-page" scroll="false" [ngClass]="{blur: loginInProgress}">
+<div>
+  <header>
+    <div class="headerContents">
+      <img class="inspectorLogo" src="images/logo-white.png">
+      <span class="title"><span style="font-weight: bold">: &nbsp;Dispatch Center</span></span>
+      <button light clear (click)="logout()">Logout</button>
+      <img class="ibmLogo" src="images/ibm-logo-white.png">
+      <!--<button class="moreButton" accent fab (click)="showPopover($event)">
+        <ion-icon name="more"></ion-icon>
+      </button>-->
+    </div>
+  </header>  
+  <main class="mainContent">
+    <div class="page-content">
+      <div class="mapContainer">
+        <sebm-google-map [latitude]="lat" [longitude]="lng" >
+          <sebm-google-map-marker (markerClick)="openInspectionDetails($event)" *ngFor="let i of inspections" [latitude]="i.lat" [longitude]="i.lng"></sebm-google-map-marker>
+          <sebm-google-map-marker *ngFor="let i of inspectors" [latitude]="i.lat" [longitude]="i.lng" iconUrl="https://mt.google.com/vt/icon?psize=20&font=fonts/Roboto-Regular.ttf&color=ff330000&name=icons/spotlight/spotlight-waypoint-a.png&ax=44&ay=48&scale=1&text=%E2%80%A2"></sebm-google-map-marker>
+        </sebm-google-map>
+      </div>
+          <div class="leftColumn" #leftColumn [style.height.px]="columnHeight">
+            <ion-card>
+              <ion-card-header class="level4">Outstanding Inspections</ion-card-header>
+              <div class="subHeader"><button small accent (click)="openInspectionDetails()"><i class="fa fa-plus"></i> New inspection</button></div>
+              <div class="cardContent">
+                  <a *ngFor="let inspection of inspections" (click)="selectInspection(inspection)">
+                    <div class="inspection" [ngClass]="{selected: selectedInspection == inspection}">
+                      <div class="name">{{inspection.name}}</div>
+                      <div class="location">{{inspection.location}}</div>
+                      <div class="contactName">{{inspection.contactName}}</div>
+                      <div class="contactPhone">{{inspection.contactPhone}}</div>
+                    </div>
+                  </a> 
+              </div>
+            </ion-card>
+          </div>
+          <div class="rightColumn" #rightColumn [style.height.px]="columnHeight">
+            <ion-card>
+              <ion-card-header class="level4">Inspectors</ion-card-header>
+              <div class="cardContent">
+                  <a *ngFor="let inspector of inspectors" (click)="selectInspector(inspector)">
+                    <div class="inspector" [ngClass]="{selected: selectedInspector == inspector}">
+                      <div class="name"><img class="icon" src="{{inspector.icon}}"> {{inspector.name}}</div>
+                      <div class="content">
+                        <div class="location">{{inspector.location}}</div>
+                        <div class="detail"><span class="subLabel">Completed:</span> {{inspector.inspectionsCompleted}}</div>
+                        <div class="detail"><span class="subLabel">Remaining:</span> {{inspector.inspectionsRemaining}}</div>
+                      </div>
+                    </div>
+                  </a>                 
+              </div>           
+            </ion-card>             
+          </div>
+    </div>
+  </main>
+
+</div>
+</ion-content>

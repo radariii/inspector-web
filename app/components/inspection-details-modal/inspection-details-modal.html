@@ -1,0 +1,42 @@
+  <ion-header>
+    Inspection Details
+  </ion-header>
+  <ion-content padding>
+    <div class="modalContent">
+      <div class="formContainer">
+        <ion-item>
+          <ion-label floating>Location name</ion-label>
+          <ion-input type="text" [(ngModel)]="inspection.name"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label floating>Address</ion-label>
+          <ion-input class="light" type="text" [(ngModel)]="inspection.location"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label floating>Reason for inspection</ion-label>
+          <ion-input class="light" type="text" [(ngModel)]="inspection.reason"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label floating>Contact</ion-label>
+          <ion-input class="light" type="text" [(ngModel)]="inspection.contactName"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label floating>Contact phone number</ion-label>
+          <ion-input class="light" type="text" [(ngModel)]="inspection.contactPhone"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label floating>Inspector assigned</ion-label>
+          <ion-select [(ngModel)]="inspection.inspector">
+            <ion-option *ngFor="let inspector of inspectors" value="{{inspector.id}}">{{inspector.name}}</ion-option>
+          </ion-select>
+        </ion-item>
+      </div>
+    </div> 
+    <div class="buttonBar"> 
+      <span class="spinnerContainer" [ngClass]="{hidden: !saveInProgress}">
+        <ion-spinner ></ion-spinner>
+      </span>
+      <button (click)="cancel()" accent clear>Cancel</button>
+      <button (click)="save()" accent>Save</button>
+    </div>
+  </ion-content>`
