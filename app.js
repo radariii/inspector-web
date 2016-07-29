@@ -17,7 +17,7 @@ var cfenv = require('cfenv');
 var app = express();
 
 // Define the configuration for the MFP server that we are reverse-proxying for
-var mfpServer = "http://mobilefoundation-bva-server.mybluemix.net";
+var mfpServer = "http://mobilefoundation-inspector-server.mybluemix.net";
 var port = 80;
 //var mfpServer = "http://localhost:9080";
 //var port = 9080;
