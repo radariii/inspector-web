@@ -14,9 +14,6 @@ declare var WLAuthorizationManager: any;
 })
 export class MainPage {
 
-  @ViewChild('leftColumn') leftColumn: any;
-  @ViewChild('rightColumn') rightColumn: any;
-
   columnHeight: number;
   inspections: Array<any>; 
   inspectors: Array<any>; 
@@ -90,6 +87,19 @@ export class MainPage {
     detailsModal.onDismiss((data) => {
       if (data){
         this.inspections.push(data);
+        var pushMessage = {
+          message : { alert : "New Inspection Required"},
+          settings : { apns : {badge : 1, iosActionKey : "Ok", payload : newInspection}},
+          target : { platforms : [ "A"]}
+        }
+        this.adapterService.callAdapter("PushAdapter", "push", "POST", pushMessage).then(
+          (response) => {
+            this.inspections = response;
+          },
+          (error) => {
+            console.error("Failed to send push notification: " + error);
+          }
+        );
       }
     });
 //    this._ngZone.run(() => {
@@ -199,8 +209,8 @@ export class MainPage {
   }
 
   onResize(event){
-    let rect = this.elementRef.nativeElement.querySelector(".leftColumn").getBoundingClientRect();
-    this.columnHeight = (window.innerHeight - rect.top - 10);
+    // let rect = this.elementRef.nativeElement.querySelector(".leftColumn").getBoundingClientRect();
+    // this.columnHeight = (window.innerHeight - rect.top - 10);
   }  
 
 }

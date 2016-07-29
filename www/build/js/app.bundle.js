@@ -240,6 +240,16 @@ var MainPage = (function () {
         detailsModal.onDismiss(function (data) {
             if (data) {
                 _this.inspections.push(data);
+                var pushMessage = {
+                    message: { alert: "New Inspection Required" },
+                    settings: { apns: { badge: 1, iosActionKey: "Ok", payload: newInspection } },
+                    target: { platforms: ["A"] }
+                };
+                _this.adapterService.callAdapter("PushAdapter", "push", "POST", pushMessage).then(function (response) {
+                    _this.inspections = response;
+                }, function (error) {
+                    console.error("Failed to send push notification: " + error);
+                });
             }
         });
         //    this._ngZone.run(() => {
@@ -339,17 +349,9 @@ var MainPage = (function () {
         });
     };
     MainPage.prototype.onResize = function (event) {
-        var rect = this.elementRef.nativeElement.querySelector(".leftColumn").getBoundingClientRect();
-        this.columnHeight = (window.innerHeight - rect.top - 10);
+        // let rect = this.elementRef.nativeElement.querySelector(".leftColumn").getBoundingClientRect();
+        // this.columnHeight = (window.innerHeight - rect.top - 10);
     };
-    __decorate([
-        core_1.ViewChild('leftColumn'), 
-        __metadata('design:type', Object)
-    ], MainPage.prototype, "leftColumn", void 0);
-    __decorate([
-        core_1.ViewChild('rightColumn'), 
-        __metadata('design:type', Object)
-    ], MainPage.prototype, "rightColumn", void 0);
     MainPage = __decorate([
         core_1.Component({
             templateUrl: 'build/pages/main/main.html',
