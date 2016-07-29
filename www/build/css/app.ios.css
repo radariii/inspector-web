@@ -9153,9 +9153,15 @@ authentication-modal ion-content {
     text-align: center; }
     authentication-modal ion-content .logoContainer img {
       width: 300px; }
+  authentication-modal ion-content .item-input.input-has-focus::after {
+    border-bottom-color: white; }
+  authentication-modal ion-content .input-has-focus ion-label[floating] {
+    color: white; }
   authentication-modal ion-content .item {
     background-color: transparent;
     padding-right: 16px; }
+    authentication-modal ion-content .item input {
+      color: white; }
 
 authentication-modal .buttonBar {
   position: absolute;

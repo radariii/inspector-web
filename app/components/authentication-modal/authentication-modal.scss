@@ -28,9 +28,21 @@ authentication-modal {
             }
         }
 
+        .item-input.input-has-focus::after {
+            border-bottom-color: white;
+        }
+
+        .input-has-focus ion-label[floating]{
+            color: white;
+        }
+
         .item {
             background-color: transparent;
             padding-right: 16px;
+
+            input {
+                color: white;
+            }
         }
     }
 
