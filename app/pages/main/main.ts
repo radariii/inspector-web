@@ -157,7 +157,7 @@ export class MainPage {
                   "username": "ian",
                   "location": "123 Front Street, Toronto, ON",
                   "name": "Ian Ingram",
-                  "inspectionsRemaining": 2,
+                  "inspectionsRemaining": 3,
                   "inspectionsCompleted": 4,
                   "password": "password"
                 },
