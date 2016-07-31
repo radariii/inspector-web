@@ -262,7 +262,8 @@ var MainPage = (function () {
     };
     MainPage.prototype.onPageWillEnter = function () {
         var _this = this;
-        this.adapterService.callAdapter("Inspections", "inspections", "GET", null).then(function (response) {
+        //this.adapterService.callAdapter("Inspections", "inspections", "GET", null).then(
+        this.adapterService.callApi("/api/inspections", "GET", [], null).then(function (response) {
             _this.inspections = response;
         }, function (error) {
             _this.inspections = [
@@ -300,7 +301,8 @@ var MainPage = (function () {
                 }
             ];
         }).then(function () {
-            _this.adapterService.callAdapter("Inspectors", "inspectors", "GET", null).then(function (response) {
+            //this.adapterService.callAdapter("Inspectors", "inspectors", "GET", null).then(
+            _this.adapterService.callApi("/api/inspectors", "GET", [], null).then(function (response) {
                 _this.inspectors = response;
             }, function (error) {
                 _this.inspectors = [
@@ -388,6 +390,24 @@ var AdapterService = (function () {
                 resolve(response.responseJSON);
             }, function (error) {
                 console.error("ERROR calling adapter: %o", error);
+                reject(error);
+            });
+        });
+    };
+    AdapterService.prototype.callApi = function (apiPath, verb, queryParams, content) {
+        var apiInvocationRequest = {
+            httpVerb: verb.toUpperCase(),
+            apiUrl: apiPath,
+            data: content,
+            queryParams: queryParams
+        };
+        var resourceRequest = new WLResourceRequest("/adapters/APIAdapter/callAPI", "POST");
+        resourceRequest.addHeader("Content-type", "application/json");
+        return new Promise(function (resolve, reject) {
+            resourceRequest.send(apiInvocationRequest).then(function (response) {
+                resolve(response.responseJSON);
+            }, function (error) {
+                console.error("ERROR calling API: %o", error);
                 reject(error);
             });
         });

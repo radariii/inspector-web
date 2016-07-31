@@ -113,7 +113,8 @@ export class MainPage {
   }  
 
   onPageWillEnter(){
-    this.adapterService.callAdapter("Inspections", "inspections", "GET", null).then( 
+    //this.adapterService.callAdapter("Inspections", "inspections", "GET", null).then(
+    this.adapterService.callApi("/api/inspections", "GET", [], null).then( 
       (response) => {
         this.inspections = response;
       },
@@ -155,7 +156,8 @@ export class MainPage {
       }
     ).then(
       () => {
-          this.adapterService.callAdapter("Inspectors", "inspectors", "GET", null).then( 
+          //this.adapterService.callAdapter("Inspectors", "inspectors", "GET", null).then(
+          this.adapterService.callApi("/api/inspectors", "GET", [], null).then( 
             (response) => {
               this.inspectors = response;
             },

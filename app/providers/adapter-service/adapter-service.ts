@@ -27,5 +27,31 @@ export class AdapterService {
     );
     
   }  
+
+  callApi (apiPath:string, verb:string, queryParams: Array<{key: String, value: String}>, content: any): Promise<any> {
+    let apiInvocationRequest = {
+      httpVerb: verb.toUpperCase(),
+      apiUrl: apiPath,
+      data: content,
+      queryParams: queryParams
+    }
+    var resourceRequest = new WLResourceRequest("/adapters/APIAdapter/callAPI", "POST");
+    resourceRequest.addHeader("Content-type", "application/json");
+    
+    return new Promise(
+          (resolve, reject) => {
+            resourceRequest.send(apiInvocationRequest).then(
+              (response) => {
+                resolve(response.responseJSON);
+              },
+              (error) => {
+                console.error("ERROR calling API: %o", error);
+                reject(error);
+              }
+            );
+          }
+    );
+    
+  }    
 }
 
