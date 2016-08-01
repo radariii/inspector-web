@@ -54,8 +54,8 @@ var wlInitOptions = {
 };
 WL.Client.init(wlInitOptions).then(function () {
     console.debug("MFP is ready for action! location = " + window.location);
-    ibmmfpfanalytics.addEvent({ 'SessionStarted': 1 });
-    ibmmfpfanalytics.addEvent({ 'SessionID': new Date().getTime() });
+    ibmmfpfanalytics.addEvent({ 'WebSessionStarted': 1 });
+    ibmmfpfanalytics.addEvent({ 'WebSessionID': new Date().getTime() });
     setInterval(function () {
         try {
             ibmmfpfanalytics.send();
@@ -141,6 +141,17 @@ var InspectionDetailsModal = (function () {
     InspectionDetailsModal.prototype.cancel = function () {
         this.viewCtrl.dismiss();
     };
+    InspectionDetailsModal.prototype.lookupLocation = function () {
+        if (this.inspection.name == "12") {
+            this.inspection.name = "Store #12";
+            this.inspection.location = "180 Somerville Ave, Somerville, MA 02143";
+            this.inspection.reason = "";
+            this.inspection.contactName = "Bob Parker";
+            this.inspection.contactPhone = "617-776-4036";
+            this.inspection.lat = 42.376285;
+            this.inspection.lng = -71.090584;
+        }
+    };
     InspectionDetailsModal = __decorate([
         core_1.Component({
             selector: 'inspection-details-modal',
@@ -179,8 +190,9 @@ var MainPage = (function () {
         this.loginInProgress = false;
         this.selectedInspection = null;
         this.selectedInspector = null;
-        this.lat = 51.678418;
-        this.lng = 7.809007;
+        this.lat = 42.398050;
+        this.lng = -71.148403;
+        this.zoom = 11;
         this.challengeHandler = WL.Client.createSecurityCheckChallengeHandler("UserLoginSecurityCheck");
         var _stepUpChallengeHandler = this.challengeHandler;
         var __nav = nav;
@@ -212,11 +224,27 @@ var MainPage = (function () {
             _this.nav.present(_this.loginModal);
         });
     };
+    MainPage.prototype.getInspectionIcon = function (inspection) {
+        if (inspection && inspection.iconUrl) {
+            return inspection.iconUrl;
+        }
+        else {
+            return "https://mt.google.com/vt/icon?psize=20&font=fonts/Roboto-Regular.ttf&color=ff330000&name=icons/spotlight/spotlight-waypoint-a.png&ax=44&ay=48&scale=1&text=%E2%80%A2";
+        }
+    };
     MainPage.prototype.selectInspection = function (inspection) {
+        if (this.selectedInspection) {
+            this.selectedInspection.iconUrl = "https://mt.google.com/vt/icon?psize=20&font=fonts/Roboto-Regular.ttf&color=ff330000&name=icons/spotlight/spotlight-waypoint-a.png&ax=44&ay=48&scale=1&text=%E2%80%A2";
+        }
         this.selectedInspection = inspection;
+        this.lng = inspection.lng;
+        this.lat = inspection.lat;
+        this.selectedInspection.iconUrl = "images/purple-dot.png";
     };
     MainPage.prototype.selectInspector = function (inspector) {
         this.selectedInspector = inspector;
+        this.lng = inspector.lng;
+        this.lat = inspector.lat;
     };
     MainPage.prototype.openInspectionDetails = function (event) {
         var _this = this;
@@ -239,6 +267,7 @@ var MainPage = (function () {
         var detailsModal = ionic_angular_1.Modal.create(inspection_details_modal_1.InspectionDetailsModal, { inspection: newInspection, inspectors: this.inspectors });
         detailsModal.onDismiss(function (data) {
             if (data) {
+                ibmmfpfanalytics.addEvent({ 'inspectionAdded': 1, 'newInspectionId': new Date().getTime() });
                 _this.inspections.push(data);
                 var pushMessage = {
                     message: { alert: "New Inspection Required" },
@@ -263,7 +292,7 @@ var MainPage = (function () {
     MainPage.prototype.onPageWillEnter = function () {
         var _this = this;
         //this.adapterService.callAdapter("Inspections", "inspections", "GET", null).then(
-        this.adapterService.callApi("/api/inspections", "GET", [], null).then(function (response) {
+        this.adapterService.callApi("/api/inspections", "GET", null, null).then(function (response) {
             _this.inspections = response;
         }, function (error) {
             _this.inspections = [
@@ -302,7 +331,7 @@ var MainPage = (function () {
             ];
         }).then(function () {
             //this.adapterService.callAdapter("Inspectors", "inspectors", "GET", null).then(
-            _this.adapterService.callApi("/api/inspectors", "GET", [], null).then(function (response) {
+            _this.adapterService.callApi("/api/inspectors", "GET", null, null).then(function (response) {
                 _this.inspectors = response;
             }, function (error) {
                 _this.inspectors = [

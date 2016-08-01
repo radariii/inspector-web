@@ -24,5 +24,18 @@ export class InspectionDetailsModal {
   cancel() {
     this.viewCtrl.dismiss();
   }  
+
+  lookupLocation(){
+    if (this.inspection.name == "12"){
+      this.inspection.name = "Store #12";
+      this.inspection.location = "180 Somerville Ave, Somerville, MA 02143";
+      this.inspection.reason = "";
+      this.inspection.contactName = "Bob Parker";
+      this.inspection.contactPhone = "617-776-4036";
+      this.inspection.lat = 42.376285;
+      this.inspection.lng = -71.090584;
+    }
+  }
+  
   
 }

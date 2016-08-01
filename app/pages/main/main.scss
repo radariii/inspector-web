@@ -67,8 +67,13 @@
 
     .mainContent {
         .page-content {
-            position: relative;
-            height: 900px;
+            // position: relative;
+            // height: 900px;
+            position: absolute;
+            top: 75px;
+            bottom: 0;
+            left: 0;
+            right: 0;            
         }
         .leftColumn {
             overflow-y: auto;

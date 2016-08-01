@@ -14,9 +14,9 @@
   <main class="mainContent">
     <div class="page-content">
       <div class="mapContainer">
-        <sebm-google-map [latitude]="lat" [longitude]="lng" >
-          <sebm-google-map-marker (markerClick)="openInspectionDetails($event)" *ngFor="let i of inspections" [latitude]="i.lat" [longitude]="i.lng"></sebm-google-map-marker>
-          <sebm-google-map-marker *ngFor="let i of inspectors" [latitude]="i.lat" [longitude]="i.lng" iconUrl="https://mt.google.com/vt/icon?psize=20&font=fonts/Roboto-Regular.ttf&color=ff330000&name=icons/spotlight/spotlight-waypoint-a.png&ax=44&ay=48&scale=1&text=%E2%80%A2"></sebm-google-map-marker>
+        <sebm-google-map [latitude]="lat" [longitude]="lng" [zoom]="zoom">
+          <sebm-google-map-marker (markerClick)="openInspectionDetails($event)" *ngFor="let i of inspections" [latitude]="i.lat" [longitude]="i.lng" [iconUrl]="getInspectionIcon(inspection)"></sebm-google-map-marker>
+          <sebm-google-map-marker *ngFor="let i of inspectors" [latitude]="i.lat" [longitude]="i.lng" iconUrl="{{i.icon}}"></sebm-google-map-marker>
         </sebm-google-map>
       </div>
           <div class="leftColumn" #leftColumn [style.height.px]="columnHeight">

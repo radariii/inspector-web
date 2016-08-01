@@ -7,6 +7,7 @@ import { GOOGLE_MAPS_DIRECTIVES } from 'angular2-google-maps/core';
 
 declare var WL: any;
 declare var WLAuthorizationManager: any;
+declare var ibmmfpfanalytics: any;
 
 @Component({
   templateUrl: 'build/pages/main/main.html',
@@ -22,8 +23,9 @@ export class MainPage {
   loginModal: Modal;
   selectedInspection = null;
   selectedInspector = null;
-  lat: number = 51.678418;
-  lng: number = 7.809007;
+  lat: number = 42.398050;
+  lng: number = -71.148403;
+  zoom: number = 11;
 
   constructor(private nav: NavController, private elementRef: ElementRef, private _ngZone: NgZone, private adapterService:AdapterService) {
     this.challengeHandler = WL.Client.createSecurityCheckChallengeHandler("UserLoginSecurityCheck");
@@ -58,12 +60,28 @@ export class MainPage {
     })
   }
 
+  getInspectionIcon(inspection){
+    if (inspection && inspection.iconUrl){
+      return inspection.iconUrl;
+    } else {
+      return "https://mt.google.com/vt/icon?psize=20&font=fonts/Roboto-Regular.ttf&color=ff330000&name=icons/spotlight/spotlight-waypoint-a.png&ax=44&ay=48&scale=1&text=%E2%80%A2";
+    }
+  }
+
   selectInspection(inspection){
+    if (this.selectedInspection){
+      this.selectedInspection.iconUrl = "https://mt.google.com/vt/icon?psize=20&font=fonts/Roboto-Regular.ttf&color=ff330000&name=icons/spotlight/spotlight-waypoint-a.png&ax=44&ay=48&scale=1&text=%E2%80%A2";
+    }
     this.selectedInspection = inspection;
+    this.lng = inspection.lng;
+    this.lat = inspection.lat;
+    this.selectedInspection.iconUrl = "images/purple-dot.png";
   }
 
   selectInspector(inspector){
     this.selectedInspector = inspector;
+    this.lng = inspector.lng;
+    this.lat = inspector.lat;
   }
 
   openInspectionDetails(event){
@@ -86,6 +104,8 @@ export class MainPage {
     let detailsModal  = Modal.create(InspectionDetailsModal, {inspection: newInspection, inspectors: this.inspectors});
     detailsModal.onDismiss((data) => {
       if (data){
+        ibmmfpfanalytics.addEvent({'inspectionAdded':1, 'newInspectionId': new Date().getTime()});
+
         this.inspections.push(data);
         var pushMessage = {
           message : { alert : "New Inspection Required"},
@@ -114,7 +134,7 @@ export class MainPage {
 
   onPageWillEnter(){
     //this.adapterService.callAdapter("Inspections", "inspections", "GET", null).then(
-    this.adapterService.callApi("/api/inspections", "GET", [], null).then( 
+    this.adapterService.callApi("/api/inspections", "GET", null, null).then( 
       (response) => {
         this.inspections = response;
       },
@@ -157,7 +177,7 @@ export class MainPage {
     ).then(
       () => {
           //this.adapterService.callAdapter("Inspectors", "inspectors", "GET", null).then(
-          this.adapterService.callApi("/api/inspectors", "GET", [], null).then( 
+          this.adapterService.callApi("/api/inspectors", "GET", null, null).then( 
             (response) => {
               this.inspectors = response;
             },

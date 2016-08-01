@@ -5,8 +5,8 @@
     <div class="modalContent">
       <div class="formContainer">
         <ion-item>
-          <ion-label floating>Location name</ion-label>
-          <ion-input type="text" [(ngModel)]="inspection.name"></ion-input>
+          <ion-label floating>Store number</ion-label>
+          <ion-input type="text" [(ngModel)]="inspection.name" (blur)="lookupLocation()"></ion-input>
         </ion-item>
         <ion-item>
           <ion-label floating>Address</ion-label>

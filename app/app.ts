@@ -49,8 +49,8 @@ var wlInitOptions = {
 WL.Client.init(wlInitOptions).then (
     function() {
         console.debug("MFP is ready for action! location = " + window.location);
-        ibmmfpfanalytics.addEvent({'SessionStarted':1});
-        ibmmfpfanalytics.addEvent({'SessionID': new Date().getTime()});
+        ibmmfpfanalytics.addEvent({'WebSessionStarted':1});
+        ibmmfpfanalytics.addEvent({'WebSessionID': new Date().getTime()});
         setInterval(function() {
           try {
             ibmmfpfanalytics.send();
