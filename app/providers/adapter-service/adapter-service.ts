@@ -35,7 +35,7 @@ export class AdapterService {
       data: content,
       queryParams: queryParams
     }
-    var resourceRequest = new WLResourceRequest("/adapters/APIAdapter/callAPI", "POST");
+    var resourceRequest = new WLResourceRequest("/adapters/APIAdapter/callAPI", WLResourceRequest.POST);
     resourceRequest.addHeader("Content-type", "application/json");
     
     return new Promise(
