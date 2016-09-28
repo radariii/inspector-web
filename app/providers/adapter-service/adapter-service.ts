@@ -1,9 +1,15 @@
 import { Injectable } from '@angular/core';
+import {Http} from '@angular/http';
+import 'rxjs/add/operator/map';
 
 declare var WLResourceRequest: any;
 
 @Injectable()
 export class AdapterService {
+
+  constructor(private http:Http){
+
+  }
 
   callAdapter (adapterName:string, path:string, verb:string, content: any): Promise<any> {
     
@@ -35,23 +41,24 @@ export class AdapterService {
       data: content,
       queryParams: queryParams
     }
+    
     var resourceRequest = new WLResourceRequest("/adapters/APIAdapter/callAPI", WLResourceRequest.POST);
     resourceRequest.addHeader("Content-type", "application/json");
-    
+
     return new Promise(
-          (resolve, reject) => {
-            resourceRequest.send(apiInvocationRequest).then(
-              (response) => {
-                resolve(response.responseJSON);
-              },
-              (error) => {
-                console.error("ERROR calling API: %o", error);
-                reject(error);
-              }
-            );
+      (resolve, reject) => {
+
+        resourceRequest.send(apiInvocationRequest).then(
+          (response) => {
+            resolve(response.responseJSON);
+          },
+          (error) => {
+            console.error("ERROR calling API: %o", error);
+            reject(error);
           }
+        );              
+      }
     );
-    
   }    
 }
 

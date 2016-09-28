@@ -129,12 +129,15 @@ export class MainPage {
   }
 
   logout() {
-    WLAuthorizationManager.logout("UserLoginSecurityCheck").then(() => this.showLoginModal());
+    WLAuthorizationManager.logout("UserLoginSecurityCheck").then(
+      () => this.showLoginModal(), 
+      () => this.showLoginModal()   // Show the login modal even when we couldn't logout as a workaround to Bluemix scope --> security check bug for web apps'
+    );
   }  
 
   onPageWillEnter(){
-    //this.adapterService.callAdapter("Inspections", "inspections", "GET", null).then(
-    this.adapterService.callApi("/api/inspections", "GET", null, null).then( 
+    this.adapterService.callAdapter("Inspections", "inspections", "GET", null).then(
+    //this.adapterService.callApi("/api/inspections", "GET", null, null).then( 
       (response) => {
         this.inspections = response;
       },
@@ -176,8 +179,8 @@ export class MainPage {
       }
     ).then(
       () => {
-          //this.adapterService.callAdapter("Inspectors", "inspectors", "GET", null).then(
-          this.adapterService.callApi("/api/inspectors", "GET", null, null).then( 
+          this.adapterService.callAdapter("Inspectors", "inspectors", "GET", null).then(
+          //this.adapterService.callApi("/api/inspectors", "GET", null, null).then( 
             (response) => {
               this.inspectors = response;
             },

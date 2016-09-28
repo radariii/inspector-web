@@ -43,7 +43,7 @@ Array.prototype["findByName"] = function(name){
 
 var wlInitOptions = {
     mfpContextRoot : '/mfp', 
-    applicationId : 'com.ibm.inspector.headquarters' 
+    applicationId : 'com.ibm.inspection.mfp8' 
 };
 
 WL.Client.init(wlInitOptions).then (

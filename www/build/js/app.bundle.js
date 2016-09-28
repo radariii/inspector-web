@@ -50,7 +50,7 @@ Array.prototype["findByName"] = function (name) {
 };
 var wlInitOptions = {
     mfpContextRoot: '/mfp',
-    applicationId: 'com.ibm.inspector.headquarters'
+    applicationId: 'com.ibm.inspection.mfp8'
 };
 WL.Client.init(wlInitOptions).then(function () {
     console.debug("MFP is ready for action! location = " + window.location);
@@ -87,20 +87,31 @@ var AuthenticationModal = (function () {
         this.challengeHandler = navParams.get("challengeHandler");
         this.loginInProgress = false;
         var __viewCtrl = viewCtrl;
-        this.challengeHandler.handleFailure = function (error) {
-            _this.loginInProgress = false;
-            _this.loginError = error.errorMsg;
-        };
-        this.challengeHandler.handleSuccess = function (successData) {
-            _this.ngZone.run(function () {
+        if (!!this.challengeHandler) {
+            this.challengeHandler.handleFailure = function (error) {
                 _this.loginInProgress = false;
-                __viewCtrl.dismiss();
-            });
-        };
+                _this.loginError = error.errorMsg;
+            };
+            this.challengeHandler.handleSuccess = function (successData) {
+                _this.ngZone.run(function () {
+                    _this.loginInProgress = false;
+                    __viewCtrl.dismiss();
+                });
+            };
+        }
     }
     AuthenticationModal.prototype.login = function () {
+        var _this = this;
         this.loginInProgress = true;
-        this.challengeHandler.submitChallengeAnswer({ username: this.username, password: this.password });
+        var __viewCtrl = this.viewCtrl;
+        // if (!!this.challengeHandler){
+        //   this.challengeHandler.submitChallengeAnswer({username: this.username, password: this.password});
+        // } else {
+        this.ngZone.run(function () {
+            _this.loginInProgress = false;
+            __viewCtrl.dismiss();
+        });
+        //    }
     };
     AuthenticationModal = __decorate([
         core_1.Component({
@@ -287,12 +298,13 @@ var MainPage = (function () {
     };
     MainPage.prototype.logout = function () {
         var _this = this;
-        WLAuthorizationManager.logout("UserLoginSecurityCheck").then(function () { return _this.showLoginModal(); });
+        WLAuthorizationManager.logout("UserLoginSecurityCheck").then(function () { return _this.showLoginModal(); }, function () { return _this.showLoginModal(); });
     };
     MainPage.prototype.onPageWillEnter = function () {
         var _this = this;
-        //this.adapterService.callAdapter("Inspections", "inspections", "GET", null).then(
-        this.adapterService.callApi("/api/inspections", "GET", null, null).then(function (response) {
+        this.adapterService.callAdapter("Inspections", "inspections", "GET", null).then(
+        //this.adapterService.callApi("/api/inspections", "GET", null, null).then( 
+        function (response) {
             _this.inspections = response;
         }, function (error) {
             _this.inspections = [
@@ -330,8 +342,9 @@ var MainPage = (function () {
                 }
             ];
         }).then(function () {
-            //this.adapterService.callAdapter("Inspectors", "inspectors", "GET", null).then(
-            _this.adapterService.callApi("/api/inspectors", "GET", null, null).then(function (response) {
+            _this.adapterService.callAdapter("Inspectors", "inspectors", "GET", null).then(
+            //this.adapterService.callApi("/api/inspectors", "GET", null, null).then( 
+            function (response) {
                 _this.inspectors = response;
             }, function (error) {
                 _this.inspectors = [
@@ -406,8 +419,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var core_1 = require('@angular/core');
+var http_1 = require('@angular/http');
+require('rxjs/add/operator/map');
 var AdapterService = (function () {
-    function AdapterService() {
+    function AdapterService(http) {
+        this.http = http;
     }
     AdapterService.prototype.callAdapter = function (adapterName, path, verb, content) {
         verb = verb.toUpperCase();
@@ -443,13 +459,13 @@ var AdapterService = (function () {
     };
     AdapterService = __decorate([
         core_1.Injectable(), 
-        __metadata('design:paramtypes', [])
+        __metadata('design:paramtypes', [http_1.Http])
     ], AdapterService);
     return AdapterService;
 }());
 exports.AdapterService = AdapterService;
 
-},{"@angular/core":152}],6:[function(require,module,exports){
+},{"@angular/core":152,"@angular/http":240,"rxjs/add/operator/map":465}],6:[function(require,module,exports){
 "use strict";
 function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
@@ -1471,7 +1487,7 @@ var EventEmitter = (function (_super) {
 }(Subject_1.Subject));
 exports.EventEmitter = EventEmitter;
 
-},{"./lang":23,"./promise":24,"rxjs/Observable":459,"rxjs/Subject":461,"rxjs/observable/PromiseObservable":465,"rxjs/operator/toPromise":466}],18:[function(require,module,exports){
+},{"./lang":23,"./promise":24,"rxjs/Observable":459,"rxjs/Subject":461,"rxjs/observable/PromiseObservable":466,"rxjs/operator/toPromise":468}],18:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -10400,7 +10416,7 @@ var SimpleExpressionChecker = (function () {
 
 },{"../facade/collection":90,"../facade/exceptions":92,"../facade/lang":93,"../interpolation_config":107,"./ast":85,"./lexer":86,"@angular/core":152}],88:[function(require,module,exports){
 arguments[4][17][0].apply(exports,arguments)
-},{"./lang":93,"./promise":95,"dup":17,"rxjs/Observable":459,"rxjs/Subject":461,"rxjs/observable/PromiseObservable":465,"rxjs/operator/toPromise":466}],89:[function(require,module,exports){
+},{"./lang":93,"./promise":95,"dup":17,"rxjs/Observable":459,"rxjs/Subject":461,"rxjs/observable/PromiseObservable":466,"rxjs/operator/toPromise":468}],89:[function(require,module,exports){
 arguments[4][18][0].apply(exports,arguments)
 },{"dup":18}],90:[function(require,module,exports){
 arguments[4][19][0].apply(exports,arguments)
@@ -28640,7 +28656,7 @@ function _createDependency(token /** TODO #9100 */, optional /** TODO #9100 */, 
 
 },{"../facade/collection":193,"../facade/lang":196,"../reflection/reflection":226,"./forward_ref":181,"./metadata":183,"./provider":185,"./provider_util":186,"./reflective_exceptions":187,"./reflective_key":189}],191:[function(require,module,exports){
 arguments[4][17][0].apply(exports,arguments)
-},{"./lang":196,"./promise":198,"dup":17,"rxjs/Observable":459,"rxjs/Subject":461,"rxjs/observable/PromiseObservable":465,"rxjs/operator/toPromise":466}],192:[function(require,module,exports){
+},{"./lang":196,"./promise":198,"dup":17,"rxjs/Observable":459,"rxjs/Subject":461,"rxjs/observable/PromiseObservable":466,"rxjs/operator/toPromise":468}],192:[function(require,module,exports){
 arguments[4][18][0].apply(exports,arguments)
 },{"dup":18}],193:[function(require,module,exports){
 arguments[4][19][0].apply(exports,arguments)
@@ -37849,7 +37865,7 @@ exports.bootstrapWorkerApp = bootstrapWorkerApp;
 
 },{"./core_private":260,"./src/facade/async":262,"./src/facade/lang":267,"./src/xhr/xhr_cache":269,"./src/xhr/xhr_impl":270,"@angular/common":6,"@angular/compiler":71,"@angular/core":152,"@angular/platform-browser":272}],262:[function(require,module,exports){
 arguments[4][17][0].apply(exports,arguments)
-},{"./lang":267,"./promise":268,"dup":17,"rxjs/Observable":459,"rxjs/Subject":461,"rxjs/observable/PromiseObservable":465,"rxjs/operator/toPromise":466}],263:[function(require,module,exports){
+},{"./lang":267,"./promise":268,"dup":17,"rxjs/Observable":459,"rxjs/Subject":461,"rxjs/observable/PromiseObservable":466,"rxjs/operator/toPromise":468}],263:[function(require,module,exports){
 arguments[4][18][0].apply(exports,arguments)
 },{"dup":18}],264:[function(require,module,exports){
 arguments[4][19][0].apply(exports,arguments)
@@ -40443,7 +40459,7 @@ exports.WebAnimationsPlayer = WebAnimationsPlayer;
 
 },{"../facade/lang":303}],297:[function(require,module,exports){
 arguments[4][17][0].apply(exports,arguments)
-},{"./lang":303,"./promise":304,"dup":17,"rxjs/Observable":459,"rxjs/Subject":461,"rxjs/observable/PromiseObservable":465,"rxjs/operator/toPromise":466}],298:[function(require,module,exports){
+},{"./lang":303,"./promise":304,"dup":17,"rxjs/Observable":459,"rxjs/Subject":461,"rxjs/observable/PromiseObservable":466,"rxjs/operator/toPromise":468}],298:[function(require,module,exports){
 arguments[4][18][0].apply(exports,arguments)
 },{"dup":18}],299:[function(require,module,exports){
 "use strict";
@@ -77548,7 +77564,7 @@ var Observable = (function () {
 }());
 exports.Observable = Observable;
 
-},{"./symbol/observable":467,"./util/root":475,"./util/toSubscriber":477}],460:[function(require,module,exports){
+},{"./symbol/observable":469,"./util/root":477,"./util/toSubscriber":479}],460:[function(require,module,exports){
 "use strict";
 exports.empty = {
     isUnsubscribed: true,
@@ -77764,7 +77780,7 @@ var SubjectObservable = (function (_super) {
     return SubjectObservable;
 }(Observable_1.Observable));
 
-},{"./Observable":459,"./SubjectSubscription":462,"./Subscriber":463,"./Subscription":464,"./symbol/rxSubscriber":468,"./util/ObjectUnsubscribedError":469,"./util/throwError":476}],462:[function(require,module,exports){
+},{"./Observable":459,"./SubjectSubscription":462,"./Subscriber":463,"./Subscription":464,"./symbol/rxSubscriber":470,"./util/ObjectUnsubscribedError":471,"./util/throwError":478}],462:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -78057,7 +78073,7 @@ var SafeSubscriber = (function (_super) {
     return SafeSubscriber;
 }(Subscriber));
 
-},{"./Observer":460,"./Subscription":464,"./symbol/rxSubscriber":468,"./util/isFunction":473}],464:[function(require,module,exports){
+},{"./Observer":460,"./Subscription":464,"./symbol/rxSubscriber":470,"./util/isFunction":475}],464:[function(require,module,exports){
 "use strict";
 var isArray_1 = require('./util/isArray');
 var isObject_1 = require('./util/isObject');
@@ -78208,7 +78224,13 @@ var Subscription = (function () {
 }());
 exports.Subscription = Subscription;
 
-},{"./util/UnsubscriptionError":470,"./util/errorObject":471,"./util/isArray":472,"./util/isFunction":473,"./util/isObject":474,"./util/tryCatch":478}],465:[function(require,module,exports){
+},{"./util/UnsubscriptionError":472,"./util/errorObject":473,"./util/isArray":474,"./util/isFunction":475,"./util/isObject":476,"./util/tryCatch":480}],465:[function(require,module,exports){
+"use strict";
+var Observable_1 = require('../../Observable');
+var map_1 = require('../../operator/map');
+Observable_1.Observable.prototype.map = map_1.map;
+
+},{"../../Observable":459,"../../operator/map":467}],466:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -78314,7 +78336,94 @@ function dispatchError(arg) {
     }
 }
 
-},{"../Observable":459,"../util/root":475}],466:[function(require,module,exports){
+},{"../Observable":459,"../util/root":477}],467:[function(require,module,exports){
+"use strict";
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Subscriber_1 = require('../Subscriber');
+/**
+ * Applies a given `project` function to each value emitted by the source
+ * Observable, and emits the resulting values as an Observable.
+ *
+ * <span class="informal">Like [Array.prototype.map()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map),
+ * it passes each source value through a transformation function to get
+ * corresponding output values.</span>
+ *
+ * <img src="./img/map.png" width="100%">
+ *
+ * Similar to the well known `Array.prototype.map` function, this operator
+ * applies a projection to each value and emits that projection in the output
+ * Observable.
+ *
+ * @example <caption>Map every every click to the clientX position of that click</caption>
+ * var clicks = Rx.Observable.fromEvent(document, 'click');
+ * var positions = clicks.map(ev => ev.clientX);
+ * positions.subscribe(x => console.log(x));
+ *
+ * @see {@link mapTo}
+ * @see {@link pluck}
+ *
+ * @param {function(value: T, index: number): R} project The function to apply
+ * to each `value` emitted by the source Observable. The `index` parameter is
+ * the number `i` for the i-th emission that has happened since the
+ * subscription, starting from the number `0`.
+ * @param {any} [thisArg] An optional argument to define what `this` is in the
+ * `project` function.
+ * @return {Observable<R>} An Observable that emits the values from the source
+ * Observable transformed by the given `project` function.
+ * @method map
+ * @owner Observable
+ */
+function map(project, thisArg) {
+    if (typeof project !== 'function') {
+        throw new TypeError('argument is not a function. Are you looking for `mapTo()`?');
+    }
+    return this.lift(new MapOperator(project, thisArg));
+}
+exports.map = map;
+var MapOperator = (function () {
+    function MapOperator(project, thisArg) {
+        this.project = project;
+        this.thisArg = thisArg;
+    }
+    MapOperator.prototype.call = function (subscriber, source) {
+        return source._subscribe(new MapSubscriber(subscriber, this.project, this.thisArg));
+    };
+    return MapOperator;
+}());
+/**
+ * We need this JSDoc comment for affecting ESDoc.
+ * @ignore
+ * @extends {Ignored}
+ */
+var MapSubscriber = (function (_super) {
+    __extends(MapSubscriber, _super);
+    function MapSubscriber(destination, project, thisArg) {
+        _super.call(this, destination);
+        this.project = project;
+        this.count = 0;
+        this.thisArg = thisArg || this;
+    }
+    // NOTE: This looks unoptimized, but it's actually purposefully NOT
+    // using try/catch optimizations.
+    MapSubscriber.prototype._next = function (value) {
+        var result;
+        try {
+            result = this.project.call(this.thisArg, value, this.count++);
+        }
+        catch (err) {
+            this.destination.error(err);
+            return;
+        }
+        this.destination.next(result);
+    };
+    return MapSubscriber;
+}(Subscriber_1.Subscriber));
+
+},{"../Subscriber":463}],468:[function(require,module,exports){
 "use strict";
 var root_1 = require('../util/root');
 /**
@@ -78343,7 +78452,7 @@ function toPromise(PromiseCtor) {
 }
 exports.toPromise = toPromise;
 
-},{"../util/root":475}],467:[function(require,module,exports){
+},{"../util/root":477}],469:[function(require,module,exports){
 "use strict";
 var root_1 = require('../util/root');
 var Symbol = root_1.root.Symbol;
@@ -78365,14 +78474,14 @@ else {
     exports.$$observable = '@@observable';
 }
 
-},{"../util/root":475}],468:[function(require,module,exports){
+},{"../util/root":477}],470:[function(require,module,exports){
 "use strict";
 var root_1 = require('../util/root');
 var Symbol = root_1.root.Symbol;
 exports.$$rxSubscriber = (typeof Symbol === 'function' && typeof Symbol.for === 'function') ?
     Symbol.for('rxSubscriber') : '@@rxSubscriber';
 
-},{"../util/root":475}],469:[function(require,module,exports){
+},{"../util/root":477}],471:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -78398,7 +78507,7 @@ var ObjectUnsubscribedError = (function (_super) {
 }(Error));
 exports.ObjectUnsubscribedError = ObjectUnsubscribedError;
 
-},{}],470:[function(require,module,exports){
+},{}],472:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -78421,30 +78530,30 @@ var UnsubscriptionError = (function (_super) {
 }(Error));
 exports.UnsubscriptionError = UnsubscriptionError;
 
-},{}],471:[function(require,module,exports){
+},{}],473:[function(require,module,exports){
 "use strict";
 // typeof any so that it we don't have to cast when comparing a result to the error object
 exports.errorObject = { e: {} };
 
-},{}],472:[function(require,module,exports){
+},{}],474:[function(require,module,exports){
 "use strict";
 exports.isArray = Array.isArray || (function (x) { return x && typeof x.length === 'number'; });
 
-},{}],473:[function(require,module,exports){
+},{}],475:[function(require,module,exports){
 "use strict";
 function isFunction(x) {
     return typeof x === 'function';
 }
 exports.isFunction = isFunction;
 
-},{}],474:[function(require,module,exports){
+},{}],476:[function(require,module,exports){
 "use strict";
 function isObject(x) {
     return x != null && typeof x === 'object';
 }
 exports.isObject = isObject;
 
-},{}],475:[function(require,module,exports){
+},{}],477:[function(require,module,exports){
 (function (global){
 "use strict";
 var objectTypes = {
@@ -78466,12 +78575,12 @@ if (freeGlobal && (freeGlobal.global === freeGlobal || freeGlobal.window === fre
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{}],476:[function(require,module,exports){
+},{}],478:[function(require,module,exports){
 "use strict";
 function throwError(e) { throw e; }
 exports.throwError = throwError;
 
-},{}],477:[function(require,module,exports){
+},{}],479:[function(require,module,exports){
 "use strict";
 var Subscriber_1 = require('../Subscriber');
 var rxSubscriber_1 = require('../symbol/rxSubscriber');
@@ -78488,7 +78597,7 @@ function toSubscriber(nextOrObserver, error, complete) {
 }
 exports.toSubscriber = toSubscriber;
 
-},{"../Subscriber":463,"../symbol/rxSubscriber":468}],478:[function(require,module,exports){
+},{"../Subscriber":463,"../symbol/rxSubscriber":470}],480:[function(require,module,exports){
 "use strict";
 var errorObject_1 = require('./errorObject');
 var tryCatchTarget;
@@ -78508,9 +78617,9 @@ function tryCatch(fn) {
 exports.tryCatch = tryCatch;
 ;
 
-},{"./errorObject":471}],479:[function(require,module,exports){
+},{"./errorObject":473}],481:[function(require,module,exports){
 
-},{}]},{},[1,479])
+},{}]},{},[1,481])
 
 
 //# sourceMappingURL=app.bundle.js.map
